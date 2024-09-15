@@ -32,29 +32,39 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   String _result = '';
 
   void _onButtonPressed(String value) {
-    setState(() {
-      if (value == 'C') {
-        _expression = '';
-        _result = '';
-      } else if (value == '=') {
-        try {
-           // Check for division by zero
-          if (_expression.contains('/0')) {
-            _result = ' Error: Division by zero';
-          } else {
-            final expression = Expression.parse(_expression);
-            const evaluator = ExpressionEvaluator();
-            final result = evaluator.eval(expression, {});
-            _result = ' = $result';
-          }
-        } catch (e) {
-          _result = ' Error';
+  setState(() {
+    if (value == 'C') {
+      _expression = '';
+      _result = '';
+    } else if (value == '=') {
+      try {
+        // Check for division by zero
+        if (_expression.contains('/0')) {
+          _result = ' Error: Division by zero';
+        } else {
+          final expression = Expression.parse(_expression);
+          const evaluator = ExpressionEvaluator();
+          final result = evaluator.eval(expression, {});
+          _result = ' = $result';
         }
-      } else {
-        _expression += value;
+      } catch (e) {
+        _result = ' Error';
       }
-    });
-  }
+    } else if (value == 'x²') {
+      try {
+        final expression = Expression.parse(_expression);
+        const evaluator = ExpressionEvaluator();
+        final result = evaluator.eval(expression, {});
+        _expression += '^2';
+        _result = ' = ${(result * result).toString()}';
+      } catch (e) {
+        _result = ' Error';
+      }
+    } else {
+      _expression += value;
+    }
+  });
+}
 
   Widget _buildButton(String value, {Color? color, Color textColor = Colors.white}) {
     return Expanded(
@@ -112,6 +122,12 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             ),
             Column(
               children: [
+                Row(
+                  children: [
+                    _buildButton('x²', color: Colors.orange),
+                    _buildButton('%', color: Colors.orange),
+                  ],
+                ),
                 Row(
                   children: [
                     _buildButton('7', color: Colors.grey[800]),
